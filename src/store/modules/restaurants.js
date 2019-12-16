@@ -3,10 +3,9 @@ import {getRestaurants} from "../../services";
 
 const state = {
     restaurants: [],
-    resultsCount: 0,
-    totalCount: 0,
-    next: false,
-    isPending: false
+    count: 0,
+    isPending: false,
+    currentRestaurant: {}
 };
 
 // getters
@@ -14,11 +13,12 @@ const getters = {};
 
 // actions
 const actions = {
-    async getRestaurants ({ commit }, payload) {
+    async getRestaurants ({ commit, state }, payload) {
         commit('setIsPending', true);
         const restaurantsResponse = await getRestaurants(payload.page, payload.pageSize, payload.query);
         commit('setRestaurants', restaurantsResponse);
         commit('setIsPending', false);
+        commit('setCurrentRestaurant', state.restaurants[0]);
     }
 };
 
@@ -29,6 +29,9 @@ const mutations = {
     },
     setIsPending (state, boolean) {
         state.isPending = boolean;
+    },
+    setCurrentRestaurant (state, restaurant){
+        state.currentRestaurant = restaurant;
     }
 };
 

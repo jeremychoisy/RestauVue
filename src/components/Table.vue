@@ -1,8 +1,13 @@
 <template>
     <div>
         <el-table
+                ref="tableDataRef"
+                v-if="!isPending"
                 :data="tableData"
-                style="width: 100%">
+                style="width: 100%"
+                highlight-current-row
+                @current-change="showPopUp"
+        >
             <el-table-column
                     label="Name"
                     prop="name">
@@ -19,19 +24,10 @@
                     align="right">
                 <template slot="header" slot-scope="{}">
                     <el-input
-                              v-model="query"
-                              @input="debouncedDispatchGetRestaurantsAction"
-                              size="mini"
-                              placeholder="Type to search"/>
-                </template>
-                <template slot-scope="scope">
-                    <el-button
+                            v-model="query"
+                            @input="debouncedDispatchGetRestaurantsAction"
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                    <el-button
-                            size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                            placeholder="Type to search"/>
                 </template>
             </el-table-column>
         </el-table>
@@ -46,44 +42,67 @@
                 @current-change="dispatchGetRestaurantsAction"
                 @size-change="dispatchGetRestaurantsAction">
         </el-pagination>
+        <template>
+            <el-dialog
+                    v-if="!isPending && this.$refs.tableDataRef "
+                    title="Restaurant details"
+                    :visible.sync="popupDialog"
+                    center>
+                <h2>Restaurant details </h2>
+
+                <span>There is the row selected :  </span>
+                <h3>Restaurant name:</h3> {{currentRestaurant.name}}
+                <h3>Restaurant address: </h3>{{currentRestaurant.address.street}}
+                <h3>Restaurant address:</h3>{{currentRestaurant}}
+                <span slot="footer" class="dialog-footer">
+                <el-button @click="closePopUp()">Close</el-button>
+             </span>
+            </el-dialog>
+        </template>
     </div>
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import {mapState} from 'vuex'
     import _ from 'lodash'
 
     export default {
-        name:"Table",
+        name: "Table",
         computed: mapState({
             tableData: state => state.restaurants.restaurants,
             resultsCount: state => state.restaurants.resultsCount,
             totalCount: state => state.restaurants.totalCount,
             isPending: state => state.restaurants.isPending,
+            currentRestaurant: state => state.restaurants.currentRestaurant
         }),
-        data: function (){
+        data: function () {
             return {
                 page: 1,
                 pageSize: 10,
                 query: '',
+                popupDialog: false,
             }
         },
         methods: {
-            dispatchGetRestaurantsAction(){
-                    this.$store.dispatch('restaurants/getRestaurants', {
-                        page: this.page,
-                        pageSize: this.pageSize,
-                        query: this.query
-                    });
-                },
-            debouncedDispatchGetRestaurantsAction: _.debounce(function(){
-                this.dispatchGetRestaurantsAction()
-            },300),
-            handleEdit(index, row) {
-                console.log(index, row);
+            dispatchGetRestaurantsAction() {
+                this.$store.dispatch('restaurants/getRestaurants', {
+                    page: this.page,
+                    pageSize: this.pageSize,
+                    query: this.query
+                });
             },
-            handleDelete(index, row) {
-                console.log(index, row);
+
+            debouncedDispatchGetRestaurantsAction: _.debounce(function () {
+                this.dispatchGetRestaurantsAction()
+            }, 300),
+
+            closePopUp() {
+                this.popupDialog = false;
+            },
+
+            showPopUp(restaurant) {
+                this.$store.commit('restaurants/setCurrentRestaurant', restaurant);
+                this.popupDialog = true;
             },
         },
         created() {
