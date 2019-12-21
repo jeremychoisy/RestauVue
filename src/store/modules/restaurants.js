@@ -17,8 +17,8 @@ const actions = {
         commit('setIsPending', true);
         const restaurantsResponse = await getRestaurants(payload.page, payload.pageSize, payload.query);
         commit('setRestaurants', restaurantsResponse);
-        commit('setIsPending', false);
         commit('setCurrentRestaurant', state.restaurants[0]);
+        commit('setIsPending', false);
     }
 };
 
