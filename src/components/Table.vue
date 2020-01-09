@@ -63,9 +63,8 @@
                         map-type-id="terrain"
                         style="width: 500px; height: 300px">
                     <GmapMarker
-                            v-for="(m, index) in markers"
                             :key="index"
-                            :position="m.position"
+                            :position="{lat:currentRestaurant.address.coord[1], lng:currentRestaurant.address.coord[0]}"
                             @click="center = m.position"
                     />
                 </GmapMap>
