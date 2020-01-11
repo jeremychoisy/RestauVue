@@ -31,12 +31,12 @@ export default {
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #409EFF;
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #409EFF;
   }
   .el-drawer__body {
     height: 100%;

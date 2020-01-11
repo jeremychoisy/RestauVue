@@ -47,28 +47,12 @@
                     :visible.sync="popupDialog"
                     :direction=direction
                     :before-close="closePopUp">
-                <span class="italic">{{currentRestaurant.cuisine}} food</span>
-                <span>{{currentRestaurant.address.street}} <span class="important">{{currentRestaurant.borough.toUpperCase()}}</span></span>
-                <span>
-                    <el-rate
-                            v-model="currentRestaurant.grades[0].score"
-                            disabled
-                    >
+                <span class="italic">{{currentRestaurant.cuisine}} food  rate    <el-rate
+                        v-model="currentRestaurant.grades[0].score"
+                        disabled
+                >
                     </el-rate>
-                </span>
-
-                <span v-for="index in 3" :key="index">
-                    <h3>{{currentRestaurant.menu[index].name}}  ${{currentRestaurant.menu[index].price}} </h3>
-                    <img class="menuImg" :src="currentRestaurant.menu[index].picture"/>
-                     Ingredients :
-                    <span v-for="ingredientIndex in  5 " :key="ingredientIndex">
-                        <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
-                        <el-badge v-if="ingredientIndex==5" type="primary"
-                                  :value="currentRestaurant.menu[index].ingredients.length"> <el-button
-                                class="el-tag"
-                                onclick="alertIngredients(currentRestaurant.menu[index].ingredients)">See more</el-button></el-badge>
-                    </span>
-
+                    stars
                 </span>
                 <GmapMap
                         :center="{lat:currentRestaurant.address.coord[1], lng:currentRestaurant.address.coord[0]}"
@@ -81,9 +65,26 @@
                             @click="center = m.position"
                     />
                 </GmapMap>
-                <span slot="footer" class="dialog-footer">
-                <el-button @click="closePopUp()">Close</el-button>
-                </span>
+                <span>{{currentRestaurant.address.street}} <span class="important">{{currentRestaurant.borough.toUpperCase()}}</span></span>
+
+                <h2>Best of 3 dishes</h2>
+                <el-collapse v-for="index in 3" :key="index" accordion>
+                    <el-collapse-item
+                            :title=currentRestaurant.menu[index].name
+                    >
+                        <img class="menuImg" :src="currentRestaurant.menu[index].picture"/>
+                        <h3> For $ {{currentRestaurant.menu[index].price}}</h3>
+                        Ingredients :
+                        <span v-for="ingredientIndex in  5 " :key="ingredientIndex">
+                        <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
+                        <el-badge v-if="ingredientIndex==5" type="primary"
+                                  :value="currentRestaurant.menu[index].ingredients.length"> <el-button
+                                class="el-tag"
+                                @click="alertIngredients(Array.from(currentRestaurant.menu[index].ingredients))">See more</el-button></el-badge>
+                    </span>
+                    </el-collapse-item>
+                </el-collapse>
+                <el-button class="moreDish">More dishes</el-button>
             </el-drawer>
         </template>
     </div>
@@ -134,13 +135,14 @@
                 this.$store.commit('restaurants/setCurrentRestaurant', restaurant);
                 this.popupDialog = true;
             },
+            alertIngredients(restaurant) {
+                alert('Ingredients : \n \n ' + restaurant);
+            }
         },
         created() {
             this.dispatchGetRestaurantsAction()
         },
-        alertIngredients(restaurant) {
-            alert('Ingredients : ' + restaurant);
-        }
+
     }
 </script>
 
@@ -151,10 +153,24 @@
         font-weight: bold;
     }
 
+    .el-rate {
+        display: inline;
+    }
+
+    .el-tag {
+        margin-right: 5px;
+    }
+
+    .el-collapse-item{
+        margin: auto;
+        width: 90%;
+    }
+
     .menuImg {
         display: block;
         margin-left: auto;
         margin-right: auto;
+        margin-bottom: 5%;
         width: 20%;
     }
 
@@ -163,10 +179,16 @@
     }
 
     .map {
-        width: 350px;
-        height: 300px;
-        margin-top: 15px;
+        width: 90%;
+        height: 40%;
+        margin-top: 5%;
         margin-left: auto;
         margin-right: auto;
     }
+
+    .moreDish{
+        margin-top:10%;
+        margin-bottom: 5%;
+    }
+
 </style>
