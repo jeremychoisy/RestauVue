@@ -43,25 +43,38 @@
         </el-pagination>
         <template>
             <el-drawer
-                    title="Restaurant details"
+                    :title=currentRestaurant.name
                     :visible.sync="popupDialog"
                     :direction=direction
                     :before-close="closePopUp">
-                <h3>Restaurant name:</h3> {{currentRestaurant.name}}
-                <h3>Restaurant address: </h3>{{currentRestaurant.address.street}}
-                <h3>Restaurant grades:</h3>{{currentRestaurant.grades[0].grade}}
-                {{this.getGrade(currentRestaurant.grades[0].grade)}}
-                <el-rate
-                        v-model="grade"
-                        disabled
-                >
-                </el-rate>
-                <h3> Location : </h3>
+                <span class="italic">{{currentRestaurant.cuisine}} food</span>
+                <span>{{currentRestaurant.address.street}} <span class="important">{{currentRestaurant.borough.toUpperCase()}}</span></span>
+                <span>
+                    {{this.getGrade(currentRestaurant.grades[0].grade)}}
+                    <el-rate
+                            v-model="grade"
+                            disabled
+                    >
+                    </el-rate>
+                </span>
+                <span v-for="index in 3" :key="index">
+                    <h3>{{currentRestaurant.menu[index].name}}  ${{currentRestaurant.menu[index].price}} </h3>
+                    <img class="menuImg" :src="currentRestaurant.menu[index].picture"/>
+                     Ingredients :
+                    <span v-for="ingredientIndex in  5 " :key="ingredientIndex">
+                        <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
+                        <el-badge v-if="ingredientIndex==5" type="primary"
+                                  :value="currentRestaurant.menu[index].ingredients.length"> <el-button
+                                class="el-tag"
+                                onclick="alertIngredients(currentRestaurant.menu[index].ingredients)">See more</el-button></el-badge>
+                    </span>
+
+                </span>
                 <GmapMap
                         :center="{lat:currentRestaurant.address.coord[1], lng:currentRestaurant.address.coord[0]}"
                         :zoom="15"
                         map-type-id="terrain"
-                        style="width: 500px; height: 300px">
+                        class="map">
                     <GmapMarker
                             :key="index"
                             :position="{lat:currentRestaurant.address.coord[1], lng:currentRestaurant.address.coord[0]}"
@@ -96,7 +109,7 @@
                 query: '',
                 popupDialog: false,
                 direction: "ltr",
-                grade: ''
+                grade: '',
             }
         },
         methods: {
@@ -149,10 +162,36 @@
         },
         created() {
             this.dispatchGetRestaurantsAction()
+        },
+        alertIngredients(restaurant) {
+            alert('Ingredients : ' + restaurant);
         }
     }
 </script>
 
 <style scoped>
     @import url("//unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css");
+
+    .important {
+        font-weight: bold;
+    }
+
+    .menuImg {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 20%;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+
+    .map {
+        width: 350px;
+        height: 300px;
+        margin-top: 15px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 </style>
