@@ -50,13 +50,13 @@
                 <span class="italic">{{currentRestaurant.cuisine}} food</span>
                 <span>{{currentRestaurant.address.street}} <span class="important">{{currentRestaurant.borough.toUpperCase()}}</span></span>
                 <span>
-                    {{this.getGrade(currentRestaurant.grades[0].grade)}}
                     <el-rate
-                            v-model="grade"
+                            v-model="currentRestaurant.grades[0].score"
                             disabled
                     >
                     </el-rate>
                 </span>
+
                 <span v-for="index in 3" :key="index">
                     <h3>{{currentRestaurant.menu[index].name}}  ${{currentRestaurant.menu[index].price}} </h3>
                     <img class="menuImg" :src="currentRestaurant.menu[index].picture"/>
@@ -133,31 +133,6 @@
             showPopUp(restaurant) {
                 this.$store.commit('restaurants/setCurrentRestaurant', restaurant);
                 this.popupDialog = true;
-            },
-            getGrade(grade) {
-                switch (grade) {
-                    case "A":
-                        this.grade = 5;
-                        return 5;
-                    case" B ":
-                        this.grade = 4;
-                        return 4;
-                    case "C" :
-                        this.grade = 3;
-                        return 3;
-                    case "D" :
-                        this.grade = 2;
-                        return 2;
-                    case "E" :
-                        this.grade = 1;
-                        return 1;
-                    case "F" :
-                        this.grade = 0.1;
-                        return 0;
-                    default:
-                        this.grade = 0;
-                        return "";
-                }
             },
         },
         created() {
