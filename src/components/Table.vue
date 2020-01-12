@@ -76,15 +76,14 @@
                         <h3> For $ {{currentRestaurant.menu[index].price}}</h3>
                         Ingredients :
                         <span v-for="ingredientIndex in  5 " :key="ingredientIndex">
-                        <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
-                        <el-badge v-if="ingredientIndex==5" type="primary"
-                                  :value="currentRestaurant.menu[index].ingredients.length"> <el-button
-                                class="el-tag"
-                                @click="alertIngredients(Array.from(currentRestaurant.menu[index].ingredients))">See more</el-button></el-badge>
+                            <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
+                            <el-badge v-if="ingredientIndex==5" type="primary"
+                                      :value="currentRestaurant.menu[index].ingredients.length"> <el-button
+                                    @click="alertIngredients(Array.from(currentRestaurant.menu[index].ingredients))">See more</el-button></el-badge>
                     </span>
                     </el-collapse-item>
                 </el-collapse>
-                <el-button class="moreDish">More dishes</el-button>
+                <el-button class="seeMoreButtons">More dishes</el-button>
             </el-drawer>
         </template>
     </div>
@@ -157,13 +156,13 @@
         display: inline;
     }
 
-    .el-tag {
-        margin-right: 5px;
-    }
-
-    .el-collapse-item{
+    .el-collapse-item {
         margin: auto;
         width: 90%;
+    }
+
+    .el-collapse-item__header {
+        font-weight: bold;
     }
 
     .menuImg {
@@ -186,9 +185,9 @@
         margin-right: auto;
     }
 
-    .moreDish{
-        margin-top:10%;
-        margin-bottom: 5%;
+    .seeMoreButtons {
+        display: block;
+        margin: 5% auto;
     }
 
 </style>
