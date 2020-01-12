@@ -21,7 +21,11 @@ const actions = {
         const user = await logIn(payload.username, payload.password);
         commit('setUser', user.user);
         commit('setIsPending', false);
+    },
+    resetUser ({commit}){
+        commit('resetUser');
     }
+    
 };
 
 // mutations
@@ -33,6 +37,11 @@ const mutations = {
     setIsPending (state, boolean) {
         state.isPending = boolean;
     },
+    resetUser(state){
+        state.username = '';
+        state.isAdmin = false;
+        state.isPending = false;
+    }
 };
 
 export default {

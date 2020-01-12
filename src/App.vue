@@ -8,10 +8,13 @@
             text-color="#000"
             active-text-color="#5fb709"
     >
-      <el-menu-item index="MainPage">Home</el-menu-item>
-      <el-menu-item :disabled="isDisabled" index="AdminPage">Admin</el-menu-item>
-      <el-button id="login-button" v-if="!isDisabled" @click="isDialogVisible = true">Login</el-button>
-      <el-button id="logout-button" v-if="isDisabled" @click="isDialogVisible = true">Logout</el-button>
+      <el-menu-item index="MainPage"><el-icon class="el-icon-s-home"/></el-menu-item>
+      <el-button class="log-button" v-if="!isAdminMode" @click="isDialogVisible = true">Login</el-button>
+      <el-button class="log-button" v-if="isAdminMode" @click="logOut()">Logout</el-button>
+      <div class="lock-icon">
+        <el-icon v-if="!isAdminMode" class="el-icon-lock"/>
+        <el-icon v-else class="el-icon-unlock"/>
+      </div>
     </el-menu>
     <img src="./assets/Vuber_eats_logo.png"/>
     <router-view/>
@@ -47,8 +50,9 @@ import {mapState} from "vuex";
 export default {
   name: 'app',
   computed: mapState({
-    isDisabled: state => !state.user.isAdmin,
+    isAdminMode: state => state.user.isAdmin,
     isPending: state => state.user.isPending,
+    username: state => state.user.username
   }),
   data(){
     return {
@@ -77,6 +81,9 @@ export default {
       if (this.$router.currentRoute.name !== index) {
         this.$router.push({name: index})
       }
+    },
+    logOut(){
+      this.$store.dispatch('user/resetUser');
     }
   }
 }
@@ -121,10 +128,16 @@ export default {
 
   .nav-bar {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
   }
 
-  #login-button {
+  .log-button {
     border: 0;
+  }
+
+  .lock-icon {
+    display: flex;
+    align-self: center;
+    margin-right: 1rem;
   }
 </style>
