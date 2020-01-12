@@ -10,7 +10,8 @@
     >
       <el-menu-item index="MainPage">Home</el-menu-item>
       <el-menu-item :disabled="isDisabled" index="AdminPage">Admin</el-menu-item>
-      <el-button id="login-button" @click="isDialogVisible = true">Login</el-button>
+      <el-button id="login-button" v-if="!isDisabled" @click="isDialogVisible = true">Login</el-button>
+      <el-button id="logout-button" v-if="isDisabled" @click="isDialogVisible = true">Logout</el-button>
     </el-menu>
     <img src="./assets/Vuber_eats_logo.png"/>
     <router-view/>
