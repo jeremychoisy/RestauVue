@@ -1,3 +1,3 @@
 export const apiConfig = {
-    restaurantBaseUrl: 'https://18.219.69.152:5000/api/'
+    restaurantBaseUrl: 'https://3.12.13.156:5000/api/'
 };
