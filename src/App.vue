@@ -1,12 +1,83 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <el-menu class="nav-bar"
+            mode="horizontal"
+            :default-active="'1'"
+            @select="handleSelect"
+            background-color="#fff"
+            text-color="#000"
+            active-text-color="#5fb709"
+    >
+      <el-menu-item index="MainPage">Home</el-menu-item>
+      <el-menu-item :disabled="isDisabled" index="AdminPage">Admin</el-menu-item>
+      <el-button id="login-button" @click="isDialogVisible = true">Login</el-button>
+    </el-menu>
+    <img src="./assets/Vuber_eats_logo.png"/>
+    <router-view/>
+    <el-dialog
+            title="Login"
+            :visible.sync="isDialogVisible"
+            width="30%"
+    >
+      <el-form ref="form" :model="loginForm" label-width="120px" :label-position="'left'">
+        <el-form-item
+                :rules="[{ required: true, message: 'An username is required'},]"
+                label="Username"
+                prop="username">
+          <el-input v-model="loginForm.username"/>
+        </el-form-item>
+        <el-form-item label="Password"
+                      :rules="[{ required: true, message: 'A password is required'},]"
+                      prop="password">
+          <el-input type="password" v-model="loginForm.password"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('form')">Submit</el-button>
+          <el-button @click="isDialogVisible = false">Cancel</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
   name: 'app',
+  computed: mapState({
+    isDisabled: state => !state.user.isAdmin,
+    isPending: state => state.user.isPending,
+  }),
+  data(){
+    return {
+      isDialogVisible: false,
+      loginForm: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$store.dispatch('user/login', {
+            username: this.loginForm.username,
+            password: this.loginForm.password,
+          });
+          this.isDialogVisible = false;
+        } else {
+          return false;
+        }
+      });
+    },
+    handleSelect(index){
+      if (this.$router.currentRoute.name !== index) {
+        this.$router.push({name: index})
+      }
+    }
+  }
 }
 </script>
 
@@ -17,7 +88,10 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+  }
+
+  body {
+    background-color: #000000;
   }
 
   ::-webkit-scrollbar {
@@ -44,4 +118,12 @@ export default {
     overflow-y: auto;
   }
 
+  .nav-bar {
+    display: flex;
+    justify-content: center;
+  }
+
+  #login-button {
+    border: 0;
+  }
 </style>

@@ -1,8 +1,7 @@
 <template>
-    <div>
-        <h1> RestauVue by Jeremy CHOISY and André DA SILVA GONCALVES</h1>
+    <el-card>
         <Table/>
-    </div>
+    </el-card>
 </template>
 
 <script>
@@ -17,5 +16,7 @@
 </script>
 
 <style scoped>
-
+ .el-card {
+     background-color: #fff;
+ }
 </style>

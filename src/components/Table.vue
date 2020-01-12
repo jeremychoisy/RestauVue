@@ -1,11 +1,15 @@
 <template>
-    <div v-if="!isPending">
+    <div>
         <el-table
                 ref="tableRef"
                 :data="tableData"
                 style="width: 100%"
                 highlight-current-row
                 @row-click="showPopUp"
+                v-loading="isPending"
+                element-loading-text="Loading..."
+                element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(0, 0, 0, 0.8)"
         >
             <el-table-column
                     label="Name"
@@ -36,7 +40,7 @@
                 :current-page.sync="page"
                 :page-size.sync="pageSize"
                 :page-sizes="[10, 20, 30, 40, 60, 70, 80, 90, 100]"
-                :total="resultsCount"
+                :total.sync="count"
                 :hide-on-single-page="true"
                 @current-change="dispatchGetRestaurantsAction"
                 @size-change="dispatchGetRestaurantsAction">
@@ -60,7 +64,6 @@
                         map-type-id="terrain"
                         class="map">
                     <GmapMarker
-                            :key="index"
                             :position="{lat:currentRestaurant.address.coord[1], lng:currentRestaurant.address.coord[0]}"
                             @click="center = m.position"
                     />
@@ -77,13 +80,15 @@
                         Ingredients :
                         <span v-for="ingredientIndex in  5 " :key="ingredientIndex">
                             <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
-                            <el-badge v-if="ingredientIndex==5" type="primary"
+                            <el-badge v-if="ingredientIndex === 5" type="primary"
                                       :value="currentRestaurant.menu[index].ingredients.length"> <el-button
                                     @click="alertIngredients(Array.from(currentRestaurant.menu[index].ingredients))">See more</el-button></el-badge>
                     </span>
                     </el-collapse-item>
                 </el-collapse>
-                <el-button class="seeMoreButtons">More dishes</el-button>
+                <el-button class="seeMoreButtons" @click="$router.push({name: 'DetailsPage'})">
+                    More about this place
+                </el-button>
             </el-drawer>
         </template>
     </div>
@@ -97,8 +102,7 @@
         name: "Table",
         computed: mapState({
             tableData: state => state.restaurants.restaurants,
-            resultsCount: state => state.restaurants.resultsCount,
-            totalCount: state => state.restaurants.totalCount,
+            count: state => state.restaurants.count,
             isPending: state => state.restaurants.isPending,
             currentRestaurant: state => state.restaurants.currentRestaurant
         }),
@@ -188,6 +192,10 @@
     .seeMoreButtons {
         display: block;
         margin: 5% auto;
+    }
+
+    .el-table {
+        margin-bottom: 1rem;
     }
 
 </style>
