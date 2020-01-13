@@ -10,6 +10,14 @@ export const getRestaurants = async (page, pageSize, query) => {
     return await fetch(baseUrl + 'restaurants' + pageParameter + pageSizeParameter + queryParameter);
 };
 
+export const deleteRestaurant = async (id) => {
+    const url = baseUrl + 'restaurants/delete/' + id;
+    let response = await fetch(url, {
+        method: "DELETE",
+    });
+    return await response.json();
+};
+
 export const logIn = async (username, password) => {
     return await fetch(baseUrl + 'user/log-in', {
         method:"POST",
