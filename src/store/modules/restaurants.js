@@ -5,7 +5,8 @@ const state = {
     restaurants: [],
     count: 0,
     isPending: false,
-    currentRestaurant: {}
+    currentRestaurant: {},
+    isFailure: ''
 };
 
 // getters
@@ -16,9 +17,17 @@ const actions = {
     async getRestaurants ({ commit, state }, payload) {
         commit('setIsPending', true);
         const restaurantsResponse = await getRestaurants(payload.page, payload.pageSize, payload.query);
-        commit('setRestaurants', restaurantsResponse);
-        commit('setCurrentRestaurant', state.restaurants[0]);
-        commit('setIsPending', false);
+        const status = restaurantsResponse.status;
+        const json = await restaurantsResponse.json();
+        if(status !== 200){
+            const message = json.message;
+            commit('setIsFailure', message);
+            commit('setIsPending', false);
+        } else {
+            commit('setRestaurants', json);
+            commit('setCurrentRestaurant', state.restaurants[0]);
+            commit('setIsPending', false);
+        }
     }
 };
 
@@ -29,6 +38,9 @@ const mutations = {
     },
     setIsPending (state, boolean) {
         state.isPending = boolean;
+    },
+    setIsFailure(state, string) {
+        state.isFailure = string;
     },
     setCurrentRestaurant (state, restaurant){
         state.currentRestaurant = restaurant;
