@@ -102,15 +102,14 @@
                     />
                 </GmapMap>
                 <span>{{currentRestaurant.address.street}} <span class="important">{{currentRestaurant.borough.toUpperCase()}}</span></span>
-                <template>
-
-                    <el-button @click="showModify(currentRestaurant)" class="seeMoreButtons" v-if="isAdminMode">
+                <span class="seeMoreButtons">
+                    <el-button @click="showModify(currentRestaurant)" v-if="isAdminMode">
                         Modify this place
                     </el-button>
                     <el-button @click="deleteClick(currentRestaurant)" v-if="isAdminMode">
                         Delete this place
                     </el-button>
-                </template>
+                </span>
 
 
                 <h2>Best of 3 dishes</h2>
@@ -124,8 +123,19 @@
                         <span v-for="ingredientIndex in  5 " :key="ingredientIndex">
                             <el-tag v-if="ingredientIndex<=4"> {{currentRestaurant.menu[index].ingredients[ingredientIndex]}}</el-tag>
                             <el-badge v-if="ingredientIndex === 5" type="primary"
-                                      :value="currentRestaurant.menu[index].ingredients.length"> <el-button
-                                    @click="alertIngredients(Array.from(currentRestaurant.menu[index].ingredients))">See more</el-button></el-badge>
+                                      :value="currentRestaurant.menu[index].ingredients.length">
+                                <el-popover
+                                    placement="right"
+                                    width="400"
+                                    trigger="click">
+                                    Ingredients list :
+                                    <ul v-for="allIngredientKey in currentRestaurant.menu[index].ingredients.length-1" :key="allIngredientKey">
+                                        <li>{{currentRestaurant.menu[index].ingredients[allIngredientKey]}}</li>
+                                    </ul>
+
+                                          <el-button slot="reference">See more</el-button>
+                                </el-popover>
+                            </el-badge>
                     </span>
                     </el-collapse-item>
                 </el-collapse>
@@ -160,6 +170,7 @@
                 popupModify: false,
                 direction: "ltr",
                 grade: '',
+                message: this.$message,
                 newRestaurant: {
                     restaurantId: '',
                     name: '',
@@ -306,9 +317,6 @@
             showPopUp(restaurant) {
                 this.$store.commit('restaurants/setCurrentRestaurant', restaurant);
                 this.popupDialog = true;
-            },
-            alertIngredients(restaurant) {
-                alert('Ingredients : \n \n ' + restaurant);
             },
             async deleteClick(restaurant) {
                 this.popupDialog = false;

@@ -9,13 +9,13 @@
                             v-for="(menu, index) in currentRestaurant.menus"
                             :key="menu._id"
                             :index="'submenu-' + index">
-                        <template slot="title" >
+                        <template slot="title">
                             <div class="menu-info">
                                 <span class="name">{{menu.name}}</span>
                                 <span class="price"> {{menu.price}}$</span>
                                 <div v-if="isAdminMode">
                                     <el-button class="edit-button"
-                                            @click.stop="updateMenu(menu)">
+                                               @click.stop="updateMenu(menu)">
                                         <el-icon class="el-icon-edit-outline"/>
                                     </el-button>
                                     <el-popconfirm
@@ -27,8 +27,8 @@
                                             @onConfirm="deleteMenu(menu)"
                                     >
                                         <el-button class="edit-button"
-                                                    slot="reference"
-                                                    @click.stop>
+                                                   slot="reference"
+                                                   @click.stop>
                                             <el-icon class="el-icon-delete"/>
                                         </el-button>
                                     </el-popconfirm>
@@ -40,9 +40,9 @@
                                     v-for="(menuItem, indexItem) in currentRestaurant.menus[index]['starters']"
                                     :key="menuItem._id"
                                     :index="'starters-' + indexItem"
-                                    @click="setSelectedDish(menuItem)" >
+                                    @click="setSelectedDish(menuItem)">
                                 <div class="item-info">
-                                    <span >{{menuItem.name}}</span>
+                                    <span>{{menuItem.name}}</span>
                                     <div v-if="isAdminMode">
                                         <el-button class="edit-button"
                                                    @click.stop="updateDishInMenu(menuItem, currentRestaurant.menus[index])">
@@ -72,7 +72,7 @@
                                     :index="'main_courses-' + indexItem"
                                     @click="setSelectedDish(menuItem)">
                                 <div class="item-info">
-                                    <span >{{menuItem.name}}</span>
+                                    <span>{{menuItem.name}}</span>
                                     <div v-if="isAdminMode">
                                         <el-button class="edit-button"
                                                    @click.stop="updateDishInMenu(menuItem, currentRestaurant.menus[index])">
@@ -102,7 +102,7 @@
                                     :index="'desserts-' + indexItem"
                                     @click="setSelectedDish(menuItem)">
                                 <div class="item-info">
-                                    <span >{{menuItem.name}}</span>
+                                    <span>{{menuItem.name}}</span>
                                     <div v-if="isAdminMode">
                                         <el-button class="edit-button"
                                                    @click.stop="updateDishInMenu(menuItem, currentRestaurant.menus[index])">
@@ -128,34 +128,34 @@
                     </el-submenu>
                     <el-submenu :index="'a-la-carte'">
                         <template slot="title">A la Carte</template>
-                            <el-menu-item
-                                    v-for="(menuItem, indexItem) in currentRestaurant.menu"
-                                    :key="menuItem._id"
-                                    :index="'dish-' + indexItem"
-                                    @click="setSelectedDish(menuItem)">
-                                <div class="item-info">
-                                    <span >{{menuItem.name}}</span>
-                                    <div v-if="isAdminMode">
+                        <el-menu-item
+                                v-for="(menuItem, indexItem) in currentRestaurant.menu"
+                                :key="menuItem._id"
+                                :index="'dish-' + indexItem"
+                                @click="setSelectedDish(menuItem)">
+                            <div class="item-info">
+                                <span>{{menuItem.name}}</span>
+                                <div v-if="isAdminMode">
+                                    <el-button class="edit-button"
+                                               @click.stop="updateDishInMenu(menuItem)">
+                                        <el-icon class="el-icon-edit-outline"/>
+                                    </el-button>
+                                    <el-popconfirm
+                                            confirmButtonText='Yes'
+                                            cancelButtonText='No'
+                                            icon="el-icon-info"
+                                            iconColor="red"
+                                            title="Are you sure to delete this?"
+                                            @onConfirm="deleteDishFromMenu(menuItem)">
                                         <el-button class="edit-button"
-                                                   @click.stop="updateDishInMenu(menuItem)">
-                                            <el-icon class="el-icon-edit-outline"/>
+                                                   slot="reference"
+                                                   @click.stop>
+                                            <el-icon class="el-icon-delete"/>
                                         </el-button>
-                                        <el-popconfirm
-                                                confirmButtonText='Yes'
-                                                cancelButtonText='No'
-                                                icon="el-icon-info"
-                                                iconColor="red"
-                                                title="Are you sure to delete this?"
-                                                @onConfirm="deleteDishFromMenu(menuItem)">
-                                            <el-button class="edit-button"
-                                                       slot="reference"
-                                                       @click.stop>
-                                                <el-icon class="el-icon-delete"/>
-                                            </el-button>
-                                        </el-popconfirm>
-                                    </div>
+                                    </el-popconfirm>
                                 </div>
-                            </el-menu-item>
+                            </div>
+                        </el-menu-item>
                     </el-submenu>
                 </el-menu>
             </el-aside>
@@ -163,12 +163,15 @@
                 <el-main>
                     <el-container class="dish-details-container" v-if="selectedDish">
                         <h2>{{selectedDish.name}}</h2>
+                        <span class="menuDetails">
                             <img class="dish-img" :src="selectedDish.picture" :alt="selectedDish.name"/>
-                            <h3>{{selectedDish.price}}$ </h3>
-                            Ingredients :
-                            <ul>
-                                <li v-for="ingredient in  selectedDish.ingredients.filter((el) => !!el) " :key="ingredient._id">{{ingredient}}</li>
+
+                            <ul><h3>Ingredients</h3>
+                                <li v-for="ingredient in  selectedDish.ingredients.filter((el) => !!el) "
+                                    :key="ingredient._id">{{ingredient}}</li>
                             </ul>
+                        </span>
+                        <h3>This dish cost {{selectedDish.price}}$ </h3>
                     </el-container>
                     <el-container v-else>
                         <el-main>
@@ -184,7 +187,8 @@
                 width="30%"
                 @closed="resetIsFailure">
             <el-spinner v-if="isPending"/>
-            <el-form v-if="action === 'updateMenu'" ref="menuForm" :model="menuUpdateForm" label-width="120px" :label-position="'left'">
+            <el-form v-if="action === 'updateMenu'" ref="menuForm" :model="menuUpdateForm" label-width="120px"
+                     :label-position="'left'">
                 <el-form-item
                         :rules="[{ required: true, message: 'A name is required'},]"
                         label="Name"
@@ -233,7 +237,9 @@
                             @blur="handleInputConfirm"
                     >
                     </el-input>
-                    <el-button v-else class="button-new-tag" size="small" @click="showIngredientInput">+ New ingredient</el-button>
+                    <el-button v-else class="button-new-tag" size="small" @click="showIngredientInput">+ New
+                        ingredient
+                    </el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitForm('menuItemForm')">Submit</el-button>
@@ -247,6 +253,7 @@
 
 <script>
     import {mapState} from 'vuex'
+
     export default {
         name: "DetailsPage",
         computed: mapState({
@@ -254,7 +261,7 @@
             currentRestaurant: state => state.restaurants.currentRestaurant,
             isPending: state => state.restaurants.isPending
         }),
-        data(){
+        data() {
             return {
                 selectedDish: undefined,
                 isDialogVisible: false,
@@ -278,17 +285,17 @@
             setSelectedDish(selectedDish) {
                 this.selectedDish = selectedDish;
             },
-            goBack(){
-               this.$router.push({name: 'MainPage'});
+            goBack() {
+                this.$router.push({name: 'MainPage'});
             },
-            updateMenu(menu){
+            updateMenu(menu) {
                 this.action = 'updateMenu';
                 this.currentMenu = menu;
                 this.menuUpdateForm.name = menu.name;
                 this.menuUpdateForm.price = menu.price;
                 this.isDialogVisible = true;
             },
-            updateDishInMenu(dish, menu){
+            updateDishInMenu(dish, menu) {
                 this.action = 'updateDish';
                 this.currentMenu = menu;
                 this.currentDish = dish;
@@ -297,8 +304,8 @@
                 this.menuItemUpdateForm.ingredients = dish.ingredients;
                 this.isDialogVisible = true;
             },
-            async deleteDishFromMenu(dish, menu){
-                if(menu) {
+            async deleteDishFromMenu(dish, menu) {
+                if (menu) {
                     await this.$store.dispatch('restaurants/deleteDishFromSpecificMenu', {
                         type: dish.type + 's',
                         dishId: dish._id,
@@ -328,13 +335,14 @@
             handleDelete(ingredients) {
                 this.menuItemUpdateForm.ingredients.splice(this.menuItemUpdateForm.ingredients.indexOf(ingredients), 1);
             },
-            resetIsFailure(){
+            resetIsFailure() {
                 this.$store.commit('user/setIsFailure', '')
             },
-            async deleteMenu(menu){
+            async deleteMenu(menu) {
                 await this.$store.dispatch('restaurants/deleteSpecificMenu', {
                     restaurantId: this.currentRestaurant._id,
-                    menuId: menu._id});
+                    menuId: menu._id
+                });
             },
             submitForm(formName) {
                 this.$refs[formName].validate(async (valid) => {
@@ -347,7 +355,7 @@
                             } :
                             {
                                 dishUpdateForm: this.menuItemUpdateForm,
-                                type: this.currentDish.type +'s',
+                                type: this.currentDish.type + 's',
                                 restaurantId: this.currentRestaurant._id,
                                 menuId: this.currentMenu ? this.currentMenu._id : '',
                                 dishId: this.currentDish._id
@@ -355,8 +363,8 @@
                         const actions = formName === 'menuForm' ? 'restaurants/UpdateSpecificMenu' : this.currentMenu ? 'restaurants/updateDishInSpecificMenu' :
                             'restaurants/updateDishInGlobalMenu';
                         await this.$store.dispatch(actions, payload);
-                        if(!this.isFailure) {
-                            if(this.currentMenu) {
+                        if (!this.isFailure) {
+                            if (this.currentMenu) {
                                 let menuIndex = this.currentRestaurant.menus.findIndex((menu) => menu._id === this.currentMenu._id);
                                 let dishIndex = this.currentRestaurant.menus[menuIndex][this.currentDish.type + 's'].findIndex((item) => item._id === this.currentDish._id);
                                 this.selectedDish = this.currentRestaurant.menus[menuIndex][this.currentDish.type + 's'][dishIndex];
@@ -425,5 +433,9 @@
 
     .menu-info .price {
         font-style: italic;
+    }
+
+    .menuDetails {
+        display: inherit;
     }
 </style>
