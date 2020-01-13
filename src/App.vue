@@ -20,11 +20,11 @@
     <router-view/>
     <el-dialog
             title="Login"
-            :visible.sync="isDialogVisible || this.isPending"
+            :visible.sync="isDialogVisible"
             width="30%"
             @closed="resetIsFailure"
     >
-      <el-spinner v-if="this.isPending"/>
+      <el-spinner v-if="isPending"/>
       <el-form ref="form" :model="loginForm" label-width="120px" :label-position="'left'">
         <el-form-item
                 :rules="[{ required: true, message: 'An username is required'},]"
@@ -173,6 +173,7 @@ export default {
   }
 
   .el-form-item__content {
+    margin-left:0 !important;
     margin-top: 1rem;
   }
 </style>

@@ -49,6 +49,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async addDishToGlobalMenu({commit}, payload) {
@@ -62,6 +63,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async addDishToSpecificMenu({commit}, payload) {
@@ -75,6 +77,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async addMenu({commit}, payload) {
@@ -88,6 +91,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     // DELETE
@@ -102,6 +106,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             dispatch('getRestaurants', {page:payload.page, pageSize:payload.pageSize,query:payload.query});
+            commit('setIsPending', false);
         }
     },
     async deleteSpecificMenu({commit}, payload) {
@@ -115,6 +120,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async deleteDishFromGlobalMenu({commit}, payload) {
@@ -128,6 +134,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async deleteDishFromSpecificMenu({commit}, payload) {
@@ -141,6 +148,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     // UPDATE
@@ -155,6 +163,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async updateDishInGlobalMenu({commit}, payload) {
@@ -168,6 +177,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async updateDishInSpecificMenu({commit}, payload) {
@@ -181,6 +191,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     },
     async UpdateSpecificMenu({commit}, payload) {
@@ -194,6 +205,7 @@ const actions = {
             commit('setIsPending', false);
         } else {
             commit('setCurrentRestaurant', json.restaurant);
+            commit('setIsPending', false);
         }
     }
 };
