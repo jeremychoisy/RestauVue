@@ -17,6 +17,10 @@ export const getRestaurants = async (page, pageSize, query) => {
 export const logIn = async (username, password) => {
     return await fetch(baseUrl + 'user/log-in', {
         method:"POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             "username": username,
             "password": password

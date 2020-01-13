@@ -16,7 +16,7 @@
         <el-icon v-else class="el-icon-unlock"/>
       </div>
     </el-menu>
-    <img src="./assets/Vuber_eats_logo.png"/>
+    <img src="./assets/Vuber_eats_logo.png" alt="Vuber Logo"/>
     <router-view/>
     <el-dialog
             title="Login"
@@ -24,7 +24,7 @@
             width="30%"
             @closed="resetIsFailure"
     >
-      <el-spinner v-if="this.isPending"></el-spinner>
+      <el-spinner v-if="this.isPending"/>
       <el-form ref="form" :model="loginForm" label-width="120px" :label-position="'left'">
         <el-form-item
                 :rules="[{ required: true, message: 'An username is required'},]"
@@ -118,7 +118,7 @@ export default {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #ffffff;
+    color: #16a32b;
   }
 
   body {
@@ -136,12 +136,12 @@ export default {
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #409EFF;
+    background: #16a32b;
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #409EFF;
+    background: #167628;
   }
   .el-drawer__body {
     height: 100%;
@@ -162,6 +162,10 @@ export default {
     display: flex;
     align-self: center;
     margin-right: 1rem;
+  }
+
+  .el-icon-s-home{
+    color: #16a32b;
   }
 
   .notification-message {

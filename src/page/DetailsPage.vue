@@ -38,8 +38,7 @@
                             </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
-                    <el-submenu
-                            :index="'a-la-carte'">
+                    <el-submenu :index="'a-la-carte'">
                         <template slot="title">A la Carte</template>
                             <el-menu-item
                                     v-for="(menuItem, indexItem) in currentRestaurant.menu"
@@ -51,23 +50,16 @@
                     </el-submenu>
                 </el-menu>
             </el-aside>
-
             <el-container>
-
-
                 <el-main>
-                    <el-container v-if="selectedDish">
-                        <el-header>
-                            {{selectedDish.name}}
-                        </el-header>
-                        <el-main>
-                            <img class="dish-img" :src="selectedDish.picture"/>
-                            <h3> For $ {{selectedDish.price}}</h3>
+                    <el-container class="dish-details-container" v-if="selectedDish">
+                        <h2>{{selectedDish.name}}</h2>
+                            <img class="dish-img" :src="selectedDish.picture" :alt="selectedDish.name"/>
+                            <h3>{{selectedDish.price}}$ </h3>
                             Ingredients :
-                            <span v-for="ingredient in  selectedDish.ingredients.filter((el) => !!el) " :key="ingredient._id">
-                                {{ingredient}}
-                            </span>
-                        </el-main>
+                            <ul>
+                                <li v-for="ingredient in  selectedDish.ingredients.filter((el) => !!el) " :key="ingredient._id">{{ingredient}}</li>
+                            </ul>
                     </el-container>
                     <el-container v-else>
                         <el-main>
@@ -86,6 +78,7 @@
     export default {
         name: "DetailsPage",
         computed: mapState({
+            isAdminMode: state => state.user.isAdmin,
             currentRestaurant: state => state.restaurants.currentRestaurant
         }),
         data(){
@@ -105,12 +98,6 @@
 </script>
 
 <style scoped>
-    .el-header {
-        background-color: #fff;
-        color: #464646;
-        line-height: 60px;
-    }
-
     .el-aside {
         background-color: white;
     }
@@ -118,5 +105,11 @@
     .dish-img {
         width: 15rem;
         height: 15rem;
+    }
+
+    .dish-details-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 </style>
