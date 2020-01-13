@@ -45,6 +45,38 @@
                 @current-change="dispatchGetRestaurantsAction"
                 @size-change="dispatchGetRestaurantsAction">
         </el-pagination>
+
+        <el-dialog title="Modify restaurant" :visible.sync="popupModify">
+            <el-form :model="newRestaurant">
+                <el-form-item label="Restaurant name">
+                    <el-input v-model="newRestaurant.name"/>
+                </el-form-item>
+                <el-form-item label="Borough ">
+                    <el-input v-model="newRestaurant.borough"/>
+                </el-form-item>
+                <el-select v-model="newRestaurant.cuisine" placeholder="Select">
+                    <el-option-group
+                            v-for="group in options"
+                            :key="group.label"
+                            :label="group.label">
+                        <el-option
+                                v-for="item in group.options"
+                                :key="item.value"
+                                :label="item.value"
+                                :value="item.value">
+                            <span style="float: left">{{ item.value }}</span>
+                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.label }}</span>
+                        </el-option>
+                    </el-option-group>
+                </el-select>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="popupModify = false">Cancel</el-button>
+                <el-button type="primary" @click="popupModify = false">Confirm</el-button>
+            </span>
+
+        </el-dialog>
+
         <template>
             <el-drawer
                     :title=currentRestaurant.name
@@ -69,6 +101,16 @@
                     />
                 </GmapMap>
                 <span>{{currentRestaurant.address.street}} <span class="important">{{currentRestaurant.borough.toUpperCase()}}</span></span>
+                <template>
+
+                    <el-button @click="showModify(currentRestaurant)" class="seeMoreButtons" v-if="isAdminMode">
+                        Modify this place
+                    </el-button>
+                    <el-button @click="deleteClick(currentRestaurant)" v-if="isAdminMode">
+                        Delete this place
+                    </el-button>
+                </template>
+
 
                 <h2>Best of 3 dishes</h2>
                 <el-collapse v-for="index in 3" :key="index" accordion>
@@ -86,7 +128,6 @@
                     </span>
                     </el-collapse-item>
                 </el-collapse>
-                <el-button v-if="isAdminMode" @click="deleteClick(currentRestaurant)">Delete this place</el-button>
                 <el-button class="seeMoreButtons" @click="$router.push({name: 'DetailsPage'})">
                     More about this place
                 </el-button>
@@ -115,8 +156,145 @@
                 pageSize: 10,
                 query: '',
                 popupDialog: false,
+                popupModify: false,
                 direction: "ltr",
                 grade: '',
+                newRestaurant: {
+                    name: '',
+                    borough: '',
+                    cuisine: ''
+                },
+                options: [
+                    {
+                        label: 'European cuisines',
+                        options: [
+                            {
+                                value: 'Albanian',
+                                label: 'Albania'
+                            },
+                            {
+                                value: 'British',
+                                label: 'English'
+                            }
+                            ,
+                            {
+                                value: 'French',
+                                label: 'France'
+                            }
+                            ,
+                            {
+                                value: 'Greek',
+                                label: 'Greece'
+                            }
+                            ,
+                            {
+                                value: 'Italian',
+                                label: 'Italy'
+                            }
+                            ,
+                            {
+                                value: 'Portuguese',
+                                label: 'Portugal'
+                            }
+                            ,
+                            {
+                                value: 'Spanish',
+                                label: 'Spain'
+                            }
+                        ]
+                    },
+                    {
+                        label: 'African cuisines',
+                        options: [
+                            {
+                                value: 'Arab',
+                                label: 'Arabs states'
+                            },
+                            {
+                                value: 'Jamaican',
+                                label: 'Jamaica'
+                            }
+                            ,
+                            {
+                                value: 'Senegalese',
+                                label: 'Senegal'
+                            }
+                            ,
+                            {
+                                value: 'Somali',
+                                label: 'Somalia'
+                            }
+                        ]
+                    },
+                    {
+                        label: 'Asian cuisines',
+                        options: [
+                            {
+                                value: 'Ainu',
+                                label: 'Japan'
+                            },
+                            {
+                                value: 'Chinese',
+                                label: 'China'
+                            }
+                            ,
+                            {
+                                value: 'Indian',
+                                label: 'India'
+                            }
+                            ,
+                            {
+                                value: 'Korean',
+                                label: 'Korea'
+                            }
+                            ,
+                            {
+                                value: 'Russian',
+                                label: 'Russia'
+                            }
+                            ,
+                            {
+                                value: 'Sri lankan',
+                                label: 'Sri Lanka'
+                            }
+                        ]
+                    },
+                    {
+                        label: 'Oceanic cuisine',
+                        options: [
+                            {
+                                value: 'Hawaiin',
+                                label: 'Hawaii'
+                            },
+                            {
+                                value: 'Malesian',
+                                label: 'Malesia'
+                            },
+                            {
+                                value: 'Polynesian',
+                                label: 'Polynesia'
+                            }
+                        ]
+                    },
+                    {
+                        label: 'Cuisines of the Americas',
+                        options: [
+                            {
+                                value: 'Argentine',
+                                label: 'República Argentina'
+                            },
+                            {
+                                value: 'Brazilian',
+                                label: 'Brazil'
+                            },
+                            {
+                                value: 'Mexican',
+                                label: 'Mexico'
+                            }
+                        ]
+                    },
+                ],
+                value: ''
             }
         },
         methods: {
@@ -126,7 +304,8 @@
                     pageSize: this.pageSize,
                     query: this.query
                 });
-            },
+            }
+            ,
 
             debouncedDispatchGetRestaurantsAction: _.debounce(function () {
                 this.dispatchGetRestaurantsAction()
@@ -135,27 +314,44 @@
             closePopUp() {
                 this.$refs.tableRef.setCurrentRow();
                 this.popupDialog = false;
-            },
+            }
+            ,
 
             showPopUp(restaurant) {
                 this.$store.commit('restaurants/setCurrentRestaurant', restaurant);
                 this.popupDialog = true;
-            },
+            }
+            ,
             alertIngredients(restaurant) {
                 alert('Ingredients : \n \n ' + restaurant);
-            },
+            }
+            ,
             async deleteClick(restaurant) {
                 this.popupDialog = false;
                 await this.$store.dispatch('restaurants/deleteRestaurant', {restaurantId: restaurant._id});
-                this.$notify({
-                    title: 'Success',
-                    message: this.isFailure ? restaurant.name + " has been deleted": restaurant.name +"hasn't been deleted",
-                });
+                if (this.isFailure)
+                    this.$message({
+                        message: restaurant.name + ' has been deleted.',
+                        type: 'success'
+                    });
+                else
+                    this.$message.error(restaurant.name + 'hasn\'t been deleted.');
             }
-        },
+            ,
+            showModify(restaurant) {
+                console.log(this.newRestaurant.name);
+                this.popupDialog = false;
+                this.popupModify = true;
+                this.newRestaurant.name = restaurant.name;
+                this.newRestaurant.borough = restaurant.borough;
+                this.newRestaurant.cuisine = restaurant.cuisine;
+            }
+        }
+        ,
         created() {
             this.dispatchGetRestaurantsAction()
-        },
+        }
+        ,
     }
 </script>
 
