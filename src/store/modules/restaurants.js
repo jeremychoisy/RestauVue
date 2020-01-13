@@ -146,9 +146,11 @@ const actions = {
     // UPDATE
     async updateRestaurant({commit}, payload) {
         commit('setIsPending', true);
+        console.log("payload "+payload.restaurantUpdateForm);
         const restaurantsResponse = await updateRestaurant(payload.restaurantUpdateForm, payload.restaurantId);
         const status = restaurantsResponse.status;
         const json = await restaurantsResponse.json();
+        console.log("reponse json " + json);
         if (status !== 200) {
             const message = json.message;
             commit('setIsFailure', message);

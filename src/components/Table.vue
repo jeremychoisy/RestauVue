@@ -34,6 +34,7 @@
                 </template>
             </el-table-column>
         </el-table>
+        {{currentRestaurant}}
         <el-pagination
                 background
                 layout="sizes, prev, pager, next"
@@ -46,7 +47,8 @@
                 @size-change="dispatchGetRestaurantsAction">
         </el-pagination>
 
-        <el-dialog title="Modify restaurant" :visible.sync="popupModify">
+        <el-dialog :close-on-press-escape="false" :show-close="false" title="Modify restaurant"
+                   :visible.sync="popupModify">
             <el-form :model="newRestaurant">
                 <el-form-item label="Restaurant name">
                     <el-input v-model="newRestaurant.name"/>
@@ -71,8 +73,8 @@
                 </el-select>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="popupModify = false">Cancel</el-button>
-                <el-button type="primary" @click="popupModify = false">Confirm</el-button>
+                <el-button @click="cancelModify()">Cancel</el-button>
+                <el-button type="primary" @click="modifyClick()">Confirm</el-button>
             </span>
 
         </el-dialog>
@@ -160,96 +162,125 @@
                 direction: "ltr",
                 grade: '',
                 newRestaurant: {
+                    restaurantId: '',
                     name: '',
                     borough: '',
                     cuisine: ''
                 },
                 options: [
-                    {label: 'European cuisines',
+                    {
+                        label: 'European cuisines',
                         options: [
-                            {value: 'Albanian',
+                            {
+                                value: 'Albanian',
                                 label: 'Albania'
                             },
-                            {value: 'British',
+                            {
+                                value: 'British',
                                 label: 'English'
                             },
-                            {value: 'French',
+                            {
+                                value: 'French',
                                 label: 'France'
                             },
-                            {value: 'Greek',
+                            {
+                                value: 'Greek',
                                 label: 'Greece'
                             },
-                            {value: 'Italian',
+                            {
+                                value: 'Italian',
                                 label: 'Italy'
                             },
-                            {value: 'Portuguese',
+                            {
+                                value: 'Portuguese',
                                 label: 'Portugal'
                             },
-                            {value: 'Spanish',
+                            {
+                                value: 'Spanish',
                                 label: 'Spain'
                             }
                         ]
                     },
-                    {label: 'African cuisines',
+                    {
+                        label: 'African cuisines',
                         options: [
-                            {value: 'Arab',
+                            {
+                                value: 'Arab',
                                 label: 'Arabs states'
                             },
-                            {value: 'Jamaican',
+                            {
+                                value: 'Jamaican',
                                 label: 'Jamaica'
                             },
-                            {value: 'Senegalese',
+                            {
+                                value: 'Senegalese',
                                 label: 'Senegal'
                             },
-                            {value: 'Somali',
+                            {
+                                value: 'Somali',
                                 label: 'Somalia'
                             }
                         ]
                     },
-                    {label: 'Asian cuisines',
+                    {
+                        label: 'Asian cuisines',
                         options: [
-                            {value: 'Ainu',
+                            {
+                                value: 'Ainu',
                                 label: 'Japan'
                             },
-                            {value: 'Chinese',
+                            {
+                                value: 'Chinese',
                                 label: 'China'
                             },
-                            {value: 'Indian',
+                            {
+                                value: 'Indian',
                                 label: 'India'
                             },
-                            {value: 'Korean',
+                            {
+                                value: 'Korean',
                                 label: 'Korea'
                             },
-                            {value: 'Russian',
+                            {
+                                value: 'Russian',
                                 label: 'Russia'
                             },
-                            {value: 'Sri lankan',
+                            {
+                                value: 'Sri lankan',
                                 label: 'Sri Lanka'
                             }
                         ]
                     },
-                    {label: 'Oceanic cuisine',
+                    {
+                        label: 'Oceanic cuisine',
                         options: [
-                            {value: 'Hawaiin',
+                            {
+                                value: 'Hawaiin',
                                 label: 'Hawaii'
                             },
-                            {value: 'Malesian',
+                            {
+                                value: 'Malesian',
                                 label: 'Malesia'
                             },
-                            {value: 'Polynesian',
+                            {
+                                value: 'Polynesian',
                                 label: 'Polynesia'
                             }
                         ]
                     },
-                    {label: 'Cuisines of the Americas',
+                    {
+                        label: 'Cuisines of the Americas',
                         options: [
-                            {value: 'Argentine',
+                            {
+                                value: 'Argentine',
                                 label: 'República Argentina'
                             },
-                            {value: 'Brazilian',
+                            {
+                                value: 'Brazilian',
                                 label: 'Brazil'
                             },
-                            {value: 'Mexican',
+                            {
+                                value: 'Mexican',
                                 label: 'Mexico'
                             }
                         ]
@@ -291,13 +322,34 @@
                 else
                     this.$message.error(restaurant.name + 'hasn\'t been deleted.');
             },
+            async modifyClick() {
+                this.popupModify = false;
+                await this.$store.dispatch('restaurants/updateRestaurant', {
+                    restaurantUpdateForm: this.newRestaurant,
+                    restaurantId: this.newRestaurant.restaurantId
+                });
+                if (this.isFailure)
+                    this.$message({
+                        message: this.newRestaurant.name + ' has been modified.',
+                        type: 'success'
+                    });
+                else
+                    this.$message.error(this.newRestaurant.name + 'hasn\'t been modified.');
+            },
             showModify(restaurant) {
-                console.log(this.newRestaurant.name);
+                this.setNewRestaurant(restaurant._id, restaurant.name, restaurant.borough, restaurant.cuisine);
                 this.popupDialog = false;
                 this.popupModify = true;
-                this.newRestaurant.name = restaurant.name;
-                this.newRestaurant.borough = restaurant.borough;
-                this.newRestaurant.cuisine = restaurant.cuisine;
+            },
+            cancelModify() {
+                this.setNewRestaurant('', '', '', '');
+                this.popupModify = false;
+            },
+            setNewRestaurant(id, name, borough, cuisine) {
+                this.newRestaurant.restaurantId = id;
+                this.newRestaurant.name = name;
+                this.newRestaurant.borough = borough;
+                this.newRestaurant.cuisine = cuisine;
             }
         },
         created() {
