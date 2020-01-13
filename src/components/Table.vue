@@ -165,130 +165,91 @@
                     cuisine: ''
                 },
                 options: [
-                    {
-                        label: 'European cuisines',
+                    {label: 'European cuisines',
                         options: [
-                            {
-                                value: 'Albanian',
+                            {value: 'Albanian',
                                 label: 'Albania'
                             },
-                            {
-                                value: 'British',
+                            {value: 'British',
                                 label: 'English'
-                            }
-                            ,
-                            {
-                                value: 'French',
+                            },
+                            {value: 'French',
                                 label: 'France'
-                            }
-                            ,
-                            {
-                                value: 'Greek',
+                            },
+                            {value: 'Greek',
                                 label: 'Greece'
-                            }
-                            ,
-                            {
-                                value: 'Italian',
+                            },
+                            {value: 'Italian',
                                 label: 'Italy'
-                            }
-                            ,
-                            {
-                                value: 'Portuguese',
+                            },
+                            {value: 'Portuguese',
                                 label: 'Portugal'
-                            }
-                            ,
-                            {
-                                value: 'Spanish',
+                            },
+                            {value: 'Spanish',
                                 label: 'Spain'
                             }
                         ]
                     },
-                    {
-                        label: 'African cuisines',
+                    {label: 'African cuisines',
                         options: [
-                            {
-                                value: 'Arab',
+                            {value: 'Arab',
                                 label: 'Arabs states'
                             },
-                            {
-                                value: 'Jamaican',
+                            {value: 'Jamaican',
                                 label: 'Jamaica'
-                            }
-                            ,
-                            {
-                                value: 'Senegalese',
+                            },
+                            {value: 'Senegalese',
                                 label: 'Senegal'
-                            }
-                            ,
-                            {
-                                value: 'Somali',
+                            },
+                            {value: 'Somali',
                                 label: 'Somalia'
                             }
                         ]
                     },
-                    {
-                        label: 'Asian cuisines',
+                    {label: 'Asian cuisines',
                         options: [
-                            {
-                                value: 'Ainu',
+                            {value: 'Ainu',
                                 label: 'Japan'
                             },
-                            {
-                                value: 'Chinese',
+                            {value: 'Chinese',
                                 label: 'China'
-                            }
-                            ,
-                            {
-                                value: 'Indian',
+                            },
+                            {value: 'Indian',
                                 label: 'India'
-                            }
-                            ,
-                            {
-                                value: 'Korean',
+                            },
+                            {value: 'Korean',
                                 label: 'Korea'
-                            }
-                            ,
-                            {
-                                value: 'Russian',
+                            },
+                            {value: 'Russian',
                                 label: 'Russia'
-                            }
-                            ,
-                            {
-                                value: 'Sri lankan',
+                            },
+                            {value: 'Sri lankan',
                                 label: 'Sri Lanka'
                             }
                         ]
                     },
-                    {
-                        label: 'Oceanic cuisine',
+                    {label: 'Oceanic cuisine',
                         options: [
-                            {
-                                value: 'Hawaiin',
+                            {value: 'Hawaiin',
                                 label: 'Hawaii'
                             },
-                            {
-                                value: 'Malesian',
+                            {value: 'Malesian',
                                 label: 'Malesia'
                             },
-                            {
-                                value: 'Polynesian',
+                            {value: 'Polynesian',
                                 label: 'Polynesia'
                             }
                         ]
                     },
-                    {
-                        label: 'Cuisines of the Americas',
+                    {label: 'Cuisines of the Americas',
                         options: [
-                            {
-                                value: 'Argentine',
+                            {value: 'Argentine',
                                 label: 'República Argentina'
                             },
-                            {
-                                value: 'Brazilian',
+                            {value: 'Brazilian',
                                 label: 'Brazil'
                             },
-                            {
-                                value: 'Mexican',
+                            {value: 'Mexican',
                                 label: 'Mexico'
                             }
                         ]
@@ -304,28 +265,21 @@
                     pageSize: this.pageSize,
                     query: this.query
                 });
-            }
-            ,
-
+            },
             debouncedDispatchGetRestaurantsAction: _.debounce(function () {
                 this.dispatchGetRestaurantsAction()
             }, 300),
-
             closePopUp() {
                 this.$refs.tableRef.setCurrentRow();
                 this.popupDialog = false;
-            }
-            ,
-
+            },
             showPopUp(restaurant) {
                 this.$store.commit('restaurants/setCurrentRestaurant', restaurant);
                 this.popupDialog = true;
-            }
-            ,
+            },
             alertIngredients(restaurant) {
                 alert('Ingredients : \n \n ' + restaurant);
-            }
-            ,
+            },
             async deleteClick(restaurant) {
                 this.popupDialog = false;
                 await this.$store.dispatch('restaurants/deleteRestaurant', {restaurantId: restaurant._id});
@@ -336,8 +290,7 @@
                     });
                 else
                     this.$message.error(restaurant.name + 'hasn\'t been deleted.');
-            }
-            ,
+            },
             showModify(restaurant) {
                 console.log(this.newRestaurant.name);
                 this.popupDialog = false;
@@ -346,12 +299,10 @@
                 this.newRestaurant.borough = restaurant.borough;
                 this.newRestaurant.cuisine = restaurant.cuisine;
             }
-        }
-        ,
+        },
         created() {
             this.dispatchGetRestaurantsAction()
-        }
-        ,
+        },
     }
 </script>
 
