@@ -146,12 +146,11 @@
             },
             async deleteClick(restaurant) {
                 this.popupDialog = false;
-                await this.$store.dispatch('restaurants/deleteRestaurant', {id: restaurant._id});
+                await this.$store.dispatch('restaurants/deleteRestaurant', {restaurantId: restaurant._id});
                 this.$notify({
                     title: 'Success',
                     message: this.isFailure ? restaurant.name + " has been deleted": restaurant.name +"hasn't been deleted",
                 });
-                console.log(restaurant);
             }
         },
         created() {

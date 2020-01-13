@@ -8,7 +8,8 @@ Vue.use(Vuex);
 
 const vuexPersist = new VuexPersist({
     key: 'my-app',
-    storage: window.localStorage
+    storage: window.localStorage,
+    modules: ['restaurants']
 });
 
 export default new Vuex.Store({

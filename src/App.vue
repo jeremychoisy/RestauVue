@@ -22,8 +22,8 @@
             title="Login"
             :visible.sync="isDialogVisible || this.isPending"
             width="30%"
+            @closed="resetIsFailure"
     >
-      <span class="error-message" v-if="this.isFailure">Error: {{this.isFailure}}</span>
       <el-spinner v-if="this.isPending"></el-spinner>
       <el-form ref="form" :model="loginForm" label-width="120px" :label-position="'left'">
         <el-form-item
@@ -70,12 +70,21 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          await this.$store.dispatch('user/login', {
-            username: this.loginForm.username,
-            password: this.loginForm.password,
-          });
+          await this.$store.dispatch('user/login', this.loginForm);
           if(!this.isFailure) {
             this.isDialogVisible = false;
+            this.$message.success({
+              duration: 2000,
+              showClose: true,
+              dangerouslyUseHTMLString: true,
+              message: '<span class="notification-message">Welcome ' + this.username + '</span>'
+            });
+          } else {
+            this.$message.error({
+              showClose: true,
+              dangerouslyUseHTMLString: true,
+              message: '<span class="notification-message">' + this.isFailure + '</span>'
+            });
           }
         } else {
           return false;
@@ -87,8 +96,17 @@ export default {
         this.$router.push({name: index})
       }
     },
-    logOut(){
-      this.$store.dispatch('user/resetUser');
+    resetIsFailure(){
+      this.$store.commit('user/setIsFailure', '')
+    },
+    async logOut(){
+      await this.$store.dispatch('user/resetUser');
+      this.$message.info({
+        duration: 2000,
+        showClose: true,
+        dangerouslyUseHTMLString: true,
+        message: '<span class="notification-message">Logged out</span>'
+      });
     }
   }
 }
@@ -100,7 +118,7 @@ export default {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
+    color: #ffffff;
   }
 
   body {
@@ -146,8 +164,8 @@ export default {
     margin-right: 1rem;
   }
 
-  .error-message {
-    color: red;
+  .notification-message {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif ;
   }
 
   .el-form-item__content {
