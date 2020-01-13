@@ -4,7 +4,8 @@ import {logIn} from "../../services";
 const state = {
     username: '',
     isAdmin: false,
-    isPending: false
+    isPending: false,
+    isFailure: ''
 };
 
 // getters
@@ -18,9 +19,18 @@ const getters = {
 const actions = {
     async login ({ commit }, payload) {
         commit('setIsPending', true);
-        const user = await logIn(payload.username, payload.password);
-        commit('setUser', user.user);
-        commit('setIsPending', false);
+        const response = await logIn(payload.username, payload.password);
+        const status = response.status;
+        const json = await response.json();
+        if(status !== 200){
+            const message = json.message;
+            commit('setIsFailure', message);
+            commit('setIsPending', false);
+        } else {
+            commit('setUser', json.user);
+            commit('setIsFailure', '');
+            commit('setIsPending', false);
+        }
     },
     resetUser ({commit}){
         commit('resetUser');
@@ -36,6 +46,9 @@ const mutations = {
     },
     setIsPending (state, boolean) {
         state.isPending = boolean;
+    },
+    setIsFailure(state, string) {
+        state.isFailure = string;
     },
     resetUser(state){
         state.username = '';

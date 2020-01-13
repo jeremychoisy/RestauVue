@@ -9,10 +9,10 @@
             active-text-color="#5fb709"
     >
       <el-menu-item index="MainPage"><el-icon class="el-icon-s-home"/></el-menu-item>
-      <el-button class="log-button" v-if="!isAdminMode" @click="isDialogVisible = true">Login</el-button>
-      <el-button class="log-button" v-if="isAdminMode" @click="logOut()">Logout</el-button>
+      <el-button class="log-button" v-if="!this.isAdminMode" @click="isDialogVisible = true">Login</el-button>
+      <el-button class="log-button" v-if="this.isAdminMode" @click="logOut()">Logout</el-button>
       <div class="lock-icon">
-        <el-icon v-if="!isAdminMode" class="el-icon-lock"/>
+        <el-icon v-if="!this.isAdminMode" class="el-icon-lock"/>
         <el-icon v-else class="el-icon-unlock"/>
       </div>
     </el-menu>
@@ -20,9 +20,11 @@
     <router-view/>
     <el-dialog
             title="Login"
-            :visible.sync="isDialogVisible"
+            :visible.sync="isDialogVisible || this.isPending"
             width="30%"
     >
+      <span class="error-message" v-if="this.isFailure">Error: {{this.isFailure}}</span>
+      <el-spinner v-if="this.isPending"></el-spinner>
       <el-form ref="form" :model="loginForm" label-width="120px" :label-position="'left'">
         <el-form-item
                 :rules="[{ required: true, message: 'An username is required'},]"
@@ -52,7 +54,8 @@ export default {
   computed: mapState({
     isAdminMode: state => state.user.isAdmin,
     isPending: state => state.user.isPending,
-    username: state => state.user.username
+    username: state => state.user.username,
+    isFailure: state => state.user.isFailure
   }),
   data(){
     return {
@@ -65,13 +68,15 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          this.$store.dispatch('user/login', {
+          await this.$store.dispatch('user/login', {
             username: this.loginForm.username,
             password: this.loginForm.password,
           });
-          this.isDialogVisible = false;
+          if(!this.isFailure) {
+            this.isDialogVisible = false;
+          }
         } else {
           return false;
         }
@@ -139,5 +144,13 @@ export default {
     display: flex;
     align-self: center;
     margin-right: 1rem;
+  }
+
+  .error-message {
+    color: red;
+  }
+
+  .el-form-item__content {
+    margin-top: 1rem;
   }
 </style>
