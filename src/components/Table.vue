@@ -34,7 +34,6 @@
                 </template>
             </el-table-column>
         </el-table>
-        {{currentRestaurant}}
         <el-pagination
                 background
                 layout="sizes, prev, pager, next"
@@ -314,13 +313,19 @@
             async deleteClick(restaurant) {
                 this.popupDialog = false;
                 await this.$store.dispatch('restaurants/deleteRestaurant', {restaurantId: restaurant._id});
-                if (this.isFailure)
-                    this.$message({
-                        message: restaurant.name + ' has been deleted.',
-                        type: 'success'
+                if (!this.isFailure){
+                    this.$message.success({
+                        dangerouslyUseHTMLString: true,
+                        showClose: true,
+                        message: '<span class="notification-message">' + restaurant.name + ' has been deleted.</span>'
                     });
-                else
-                    this.$message.error(restaurant.name + 'hasn\'t been deleted.');
+                this.dispatchGetRestaurantsAction();
+                }else
+                    this.$message.error({
+                        dangerouslyUseHTMLString: true,
+                        showClose: true,
+                        message : '<span class="notification-message">' + restaurant.name + 'has not been deleted.</span>'
+                    });
             },
             async modifyClick() {
                 this.popupModify = false;
@@ -328,13 +333,20 @@
                     restaurantUpdateForm: this.newRestaurant,
                     restaurantId: this.newRestaurant.restaurantId
                 });
-                if (this.isFailure)
-                    this.$message({
-                        message: this.newRestaurant.name + ' has been modified.',
-                        type: 'success'
+                if (!this.isFailure) {
+                    this.$message.success({
+                        dangerouslyUseHTMLString: true,
+                        showClose: true,
+                        message: '<span class="notification-message">' + this.newRestaurant.name + ' has been modified.</span>'
                     });
-                else
-                    this.$message.error(this.newRestaurant.name + 'hasn\'t been modified.');
+                    this.dispatchGetRestaurantsAction()
+                } else {
+                    this.$message.error({
+                        dangerouslyUseHTMLString: true,
+                        showClose: true,
+                        message : '<span class="notification-message">' + this.newRestaurant.name + '\' has not been modified.</span>'
+                    });
+                }
             },
             showModify(restaurant) {
                 this.setNewRestaurant(restaurant._id, restaurant.name, restaurant.borough, restaurant.cuisine);

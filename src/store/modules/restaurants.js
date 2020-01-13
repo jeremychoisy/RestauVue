@@ -95,7 +95,7 @@ const actions = {
         }
     },
     // DELETE
-    async deleteRestaurant({commit, dispatch}, payload) {
+    async deleteRestaurant({commit}, payload) {
         commit('setIsPending', true);
         const restaurantsResponse = await deleteRestaurant(payload.restaurantId);
         const status = restaurantsResponse.status;
@@ -105,7 +105,6 @@ const actions = {
             commit('setIsFailure', message);
             commit('setIsPending', false);
         } else {
-            dispatch('getRestaurants', {page:payload.page, pageSize:payload.pageSize,query:payload.query});
             commit('setIsPending', false);
         }
     },
@@ -154,11 +153,11 @@ const actions = {
     // UPDATE
     async updateRestaurant({commit}, payload) {
         commit('setIsPending', true);
-        console.log("payload "+payload.restaurantUpdateForm);
+        console.log(payload.restaurantUpdateForm);
         const restaurantsResponse = await updateRestaurant(payload.restaurantUpdateForm, payload.restaurantId);
         const status = restaurantsResponse.status;
         const json = await restaurantsResponse.json();
-        console.log("reponse json " + json);
+        console.log(json);
         if (status !== 200) {
             const message = json.message;
             commit('setIsFailure', message);

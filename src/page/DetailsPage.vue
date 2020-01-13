@@ -45,7 +45,7 @@
                                     <span >{{menuItem.name}}</span>
                                     <div v-if="isAdminMode">
                                         <el-button class="edit-button"
-                                                   @click.stop="updateDishInSpecificMenu(menuItem, currentRestaurant.menus[index])">
+                                                   @click.stop="updateDishInMenu(menuItem, currentRestaurant.menus[index])">
                                             <el-icon class="el-icon-edit-outline"/>
                                         </el-button>
                                         <el-popconfirm
@@ -54,7 +54,7 @@
                                                 icon="el-icon-info"
                                                 iconColor="red"
                                                 title="Are you sure to delete this?"
-                                                @onConfirm="deleteDishFromSpecificMenu(menuItem, currentRestaurant.menus[index])">
+                                                @onConfirm="deleteDishFromMenu(menuItem, currentRestaurant.menus[index])">
                                             <el-button class="edit-button"
                                                        slot="reference"
                                                        @click.stop>
@@ -75,7 +75,7 @@
                                     <span >{{menuItem.name}}</span>
                                     <div v-if="isAdminMode">
                                         <el-button class="edit-button"
-                                                   @click.stop="updateDishInSpecificMenu(menuItem, currentRestaurant.menus[index])">
+                                                   @click.stop="updateDishInMenu(menuItem, currentRestaurant.menus[index])">
                                             <el-icon class="el-icon-edit-outline"/>
                                         </el-button>
                                         <el-popconfirm
@@ -84,7 +84,7 @@
                                                 icon="el-icon-info"
                                                 iconColor="red"
                                                 title="Are you sure to delete this?"
-                                                @onConfirm="deleteDishFromSpecificMenu(menuItem, currentRestaurant.menus[index])">
+                                                @onConfirm="deleteDishFromMenu(menuItem, currentRestaurant.menus[index])">
                                             <el-button class="edit-button"
                                                        slot="reference"
                                                        @click.stop>
@@ -105,7 +105,7 @@
                                     <span >{{menuItem.name}}</span>
                                     <div v-if="isAdminMode">
                                         <el-button class="edit-button"
-                                                   @click.stop="updateDishInSpecificMenu(menuItem, currentRestaurant.menus[index])">
+                                                   @click.stop="updateDishInMenu(menuItem, currentRestaurant.menus[index])">
                                             <el-icon class="el-icon-edit-outline"/>
                                         </el-button>
                                         <el-popconfirm
@@ -114,7 +114,7 @@
                                                 icon="el-icon-info"
                                                 iconColor="red"
                                                 title="Are you sure to delete this?"
-                                                @onConfirm="deleteDishFromSpecificMenu(menuItem, currentRestaurant.menus[index])">
+                                                @onConfirm="deleteDishFromMenu(menuItem, currentRestaurant.menus[index])">
                                             <el-button class="edit-button"
                                                        slot="reference"
                                                        @click.stop>
@@ -133,7 +133,28 @@
                                     :key="menuItem._id"
                                     :index="'dish-' + indexItem"
                                     @click="setSelectedDish(menuItem)">
-                                {{menuItem.name}}
+                                <div class="item-info">
+                                    <span >{{menuItem.name}}</span>
+                                    <div v-if="isAdminMode">
+                                        <el-button class="edit-button"
+                                                   @click.stop="updateDishInMenu(menuItem)">
+                                            <el-icon class="el-icon-edit-outline"/>
+                                        </el-button>
+                                        <el-popconfirm
+                                                confirmButtonText='Yes'
+                                                cancelButtonText='No'
+                                                icon="el-icon-info"
+                                                iconColor="red"
+                                                title="Are you sure to delete this?"
+                                                @onConfirm="deleteDishFromMenu(menuItem)">
+                                            <el-button class="edit-button"
+                                                       slot="reference"
+                                                       @click.stop>
+                                                <el-icon class="el-icon-delete"/>
+                                            </el-button>
+                                        </el-popconfirm>
+                                    </div>
+                                </div>
                             </el-menu-item>
                     </el-submenu>
                 </el-menu>
@@ -267,7 +288,7 @@
                 this.menuUpdateForm.price = menu.price;
                 this.isDialogVisible = true;
             },
-            updateDishInSpecificMenu(dish, menu){
+            updateDishInMenu(dish, menu){
                 this.action = 'updateDish';
                 this.currentMenu = menu;
                 this.currentDish = dish;
@@ -276,13 +297,20 @@
                 this.menuItemUpdateForm.ingredients = dish.ingredients;
                 this.isDialogVisible = true;
             },
-            async deleteDishFromSpecificMenu(dish, menu){
-                await this.$store.dispatch('restaurants/deleteDishFromSpecificMenu', {
-                    type: dish.type +'s',
-                    dishId: dish._id,
-                    restaurantId: this.currentRestaurant._id,
-                    menuId: menu._id
-                });
+            async deleteDishFromMenu(dish, menu){
+                if(menu) {
+                    await this.$store.dispatch('restaurants/deleteDishFromSpecificMenu', {
+                        type: dish.type + 's',
+                        dishId: dish._id,
+                        restaurantId: this.currentRestaurant._id,
+                        menuId: menu._id
+                    });
+                } else {
+                    await this.$store.dispatch('restaurants/deleteDishFromGlobalMenu', {
+                        dishId: dish._id,
+                        restaurantId: this.currentRestaurant._id,
+                    });
+                }
             },
             showIngredientInput() {
                 this.isIngredientInputVisible = true;
@@ -321,14 +349,21 @@
                                 dishUpdateForm: this.menuItemUpdateForm,
                                 type: this.currentDish.type +'s',
                                 restaurantId: this.currentRestaurant._id,
-                                menuId: this.currentMenu._id,
+                                menuId: this.currentMenu ? this.currentMenu._id : '',
                                 dishId: this.currentDish._id
                             };
-                        await this.$store.dispatch(formName === 'menuForm' ? 'restaurants/UpdateSpecificMenu' : 'restaurants/updateDishInSpecificMenu', payload);
+                        const actions = formName === 'menuForm' ? 'restaurants/UpdateSpecificMenu' : this.currentMenu ? 'restaurants/updateDishInSpecificMenu' :
+                            'restaurants/updateDishInGlobalMenu';
+                        await this.$store.dispatch(actions, payload);
                         if(!this.isFailure) {
-                            let menuIndex = this.currentRestaurant.menus.findIndex((menu) => menu._id === this.currentMenu._id);
-                            let dishIndex = this.currentRestaurant.menus[menuIndex][this.currentDish.type + 's'].findIndex((item) => item._id === this.currentDish._id);
-                            this.selectedDish = this.currentRestaurant.menus[menuIndex][this.currentDish.type + 's'][dishIndex];
+                            if(this.currentMenu) {
+                                let menuIndex = this.currentRestaurant.menus.findIndex((menu) => menu._id === this.currentMenu._id);
+                                let dishIndex = this.currentRestaurant.menus[menuIndex][this.currentDish.type + 's'].findIndex((item) => item._id === this.currentDish._id);
+                                this.selectedDish = this.currentRestaurant.menus[menuIndex][this.currentDish.type + 's'][dishIndex];
+                            } else {
+                                let dishIndex = this.currentRestaurant.menu.findIndex((item) => item._id === this.currentDish._id);
+                                this.selectedDish = this.currentRestaurant.menu[dishIndex];
+                            }
                             this.isDialogVisible = false;
                             this.$message.success({
                                 duration: 2000,
