@@ -80,6 +80,7 @@
 
         <template>
             <el-drawer
+                    v-if="tableData.length"
                     :title=currentRestaurant.name
                     :visible.sync="popupDialog"
                     :direction=direction

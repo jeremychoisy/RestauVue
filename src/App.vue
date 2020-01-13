@@ -16,7 +16,7 @@
         <el-icon v-else class="el-icon-unlock"/>
       </div>
     </el-menu>
-    <img src="./assets/Vuber_eats_logo.png" alt="Vuber Logo"/>
+    <img src="./assets/Vuber_eats_logo.png" alt="Vuber Logo" width="23%"/>
     <router-view/>
     <el-dialog
             title="Login"

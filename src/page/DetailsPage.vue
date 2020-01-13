@@ -163,6 +163,7 @@
                 <el-main>
                     <el-container class="dish-details-container" v-if="selectedDish">
                         <h2>{{selectedDish.name}}</h2>
+                        <h3>{{selectedDish.price}}$ </h3>
                         <span class="menuDetails">
                             <img class="dish-img" :src="selectedDish.picture" :alt="selectedDish.name"/>
 
@@ -171,7 +172,7 @@
                                     :key="ingredient._id">{{ingredient}}</li>
                             </ul>
                         </span>
-                        <h3>This dish cost {{selectedDish.price}}$ </h3>
+
                     </el-container>
                     <el-container v-else>
                         <el-main>
