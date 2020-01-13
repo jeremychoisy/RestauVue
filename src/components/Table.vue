@@ -51,12 +51,12 @@
                     :visible.sync="popupDialog"
                     :direction=direction
                     :before-close="closePopUp">
-                <span class="italic">{{currentRestaurant.cuisine}} food  rate    <el-rate
+                <span class="italic">{{currentRestaurant.cuisine}} food   <el-rate
                         v-model="currentRestaurant.grades[0].score"
                         disabled
                 >
                     </el-rate>
-                    stars
+
                 </span>
                 <GmapMap
                         :center="{lat:currentRestaurant.address.coord[1], lng:currentRestaurant.address.coord[0]}"
@@ -86,6 +86,7 @@
                     </span>
                     </el-collapse-item>
                 </el-collapse>
+                <el-button v-if="isAdminMode" @click="deleteClick(currentRestaurant)">Delete this place</el-button>
                 <el-button class="seeMoreButtons" @click="$router.push({name: 'DetailsPage'})">
                     More about this place
                 </el-button>
@@ -104,7 +105,8 @@
             tableData: state => state.restaurants.restaurants,
             count: state => state.restaurants.count,
             isPending: state => state.restaurants.isPending,
-            currentRestaurant: state => state.restaurants.currentRestaurant
+            currentRestaurant: state => state.restaurants.currentRestaurant,
+            isAdminMode: state => state.user.isAdmin,
         }),
         data: function () {
             return {
@@ -140,12 +142,14 @@
             },
             alertIngredients(restaurant) {
                 alert('Ingredients : \n \n ' + restaurant);
+            },
+            deleteClick(restaurant) {
+                console.log(restaurant);
             }
         },
         created() {
             this.dispatchGetRestaurantsAction()
         },
-
     }
 </script>
 
