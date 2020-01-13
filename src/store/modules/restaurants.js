@@ -1,5 +1,5 @@
 // initial state
-import {getRestaurants} from "../../services";
+import {deleteRestaurant, getRestaurants} from "../../services";
 
 const state = {
     restaurants: [],
@@ -14,12 +14,12 @@ const getters = {};
 
 // actions
 const actions = {
-    async getRestaurants ({ commit, state }, payload) {
+    async getRestaurants({commit, state}, payload) {
         commit('setIsPending', true);
         const restaurantsResponse = await getRestaurants(payload.page, payload.pageSize, payload.query);
         const status = restaurantsResponse.status;
         const json = await restaurantsResponse.json();
-        if(status !== 200){
+        if (status !== 200) {
             const message = json.message;
             commit('setIsFailure', message);
             commit('setIsPending', false);
@@ -28,21 +28,34 @@ const actions = {
             commit('setCurrentRestaurant', state.restaurants[0]);
             commit('setIsPending', false);
         }
+    },
+    async deleteRestaurant({commit, dispatch}, payload) {
+        commit('setIsPending', true);
+        const restaurantsResponse = await deleteRestaurant(payload.id);
+        const status = restaurantsResponse.status;
+        const json = await restaurantsResponse.json();
+        if (status !== 200) {
+            const message = json.message;
+            commit('setIsFailure', message);
+            commit('setIsPending', false);
+        } else {
+            dispatch('getRestaurants', {page:payload.page, pageSize:payload.pageSize,query:payload.query});
+        }
     }
 };
 
 // mutations
 const mutations = {
-    setRestaurants (state, restaurants) {
+    setRestaurants(state, restaurants) {
         Object.assign(state, restaurants);
     },
-    setIsPending (state, boolean) {
+    setIsPending(state, boolean) {
         state.isPending = boolean;
     },
     setIsFailure(state, string) {
         state.isFailure = string;
     },
-    setCurrentRestaurant (state, restaurant){
+    setCurrentRestaurant(state, restaurant) {
         state.currentRestaurant = restaurant;
     }
 };

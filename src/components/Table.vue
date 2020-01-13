@@ -107,6 +107,7 @@
             isPending: state => state.restaurants.isPending,
             currentRestaurant: state => state.restaurants.currentRestaurant,
             isAdminMode: state => state.user.isAdmin,
+            isFailure: state => state.restaurants.isFailure
         }),
         data: function () {
             return {
@@ -143,7 +144,13 @@
             alertIngredients(restaurant) {
                 alert('Ingredients : \n \n ' + restaurant);
             },
-            deleteClick(restaurant) {
+            async deleteClick(restaurant) {
+                this.popupDialog = false;
+                await this.$store.dispatch('restaurants/deleteRestaurant', {id: restaurant._id});
+                this.$notify({
+                    title: 'Success',
+                    message: this.isFailure ? restaurant.name + " has been deleted": restaurant.name +"hasn't been deleted",
+                });
                 console.log(restaurant);
             }
         },
